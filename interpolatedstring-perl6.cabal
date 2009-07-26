@@ -1,0 +1,21 @@
+Name:          interpolatedstring-perl6
+Version:       0.4
+License:       BSD3
+License-file:  LICENSE
+Category:      Data
+Author:        Audrey Tang
+Copyright:     Audrey Tang
+Maintainer:    Audrey Tang <audreyt@audreyt.org>
+Stability:     unstable
+Cabal-Version: >= 1.2
+Build-Depends: base
+Build-Type:    Custom
+Synopsis:      QuasiQuoter for Perl6-style multi-line interpolated strings with "q", "qq" and "qc" support.
+Description:   QuasiQuoter for Perl6-style multi-line interpolated strings with "q", "qq" and "qc" support.
+Data-Files:    tests/Test.hs
+
+library
+    extensions:      TemplateHaskell, TypeSynonymInstances, FlexibleInstances, UndecidableInstances, OverlappingInstances
+    build-depends:   base < 5, template-haskell, haskell-src-meta
+    hs-source-dirs:  src
+    exposed-modules: Text.InterpolatedString.Perl6
