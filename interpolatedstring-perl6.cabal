@@ -10,7 +10,7 @@ Stability:     unstable
 Cabal-Version: >= 1.2
 Build-Depends: base
 Build-Type:    Custom
-Synopsis:      QuasiQuoter for Perl6-style multi-line interpolated strings with "q", "qq" and "qc" support.
+Synopsis:      QuasiQuoter for Perl6-style multi-line interpolated strings
 Description:   QuasiQuoter for Perl6-style multi-line interpolated strings with "q", "qq" and "qc" support.
 Data-Files:    tests/Test.hs
 
