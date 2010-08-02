@@ -1,5 +1,5 @@
 Name:          interpolatedstring-perl6
-Version:       0.4
+Version:       0.5
 License:       BSD3
 License-file:  LICENSE
 Category:      Data
@@ -16,6 +16,6 @@ Data-Files:    tests/Test.hs
 
 library
     extensions:      TemplateHaskell, TypeSynonymInstances, FlexibleInstances, UndecidableInstances, OverlappingInstances
-    build-depends:   base < 5, template-haskell, haskell-src-meta
+    build-depends:   base < 5, template-haskell, haskell-src-meta-mwotton
     hs-source-dirs:  src
     exposed-modules: Text.InterpolatedString.Perl6
