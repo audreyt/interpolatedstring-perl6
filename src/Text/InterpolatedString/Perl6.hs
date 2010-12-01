@@ -156,10 +156,10 @@ parseQC a ('{':xs)     = Literal (reverse a) : unQC [] xs
 parseQC a (x:xs)       = parseQC (x:a) xs
 
 unQQ a []          = [Literal (reverse a)]
-unQQ a ('\\':x:xs) = unQC (x:a) xs
-unQQ a ('\\':[])   = unQC ('\\':a) []
+unQQ a ('\\':x:xs) = unQQ (x:a) xs
+unQQ a ('\\':[])   = unQQ ('\\':a) []
 unQQ a ('}':xs)    = AntiQuote (reverse a) : parseQQ [] xs
-unQQ a (x:xs)      = unQC (x:a) xs
+unQQ a (x:xs)      = unQQ (x:a) xs
 
 parseQQ a []           = [Literal (reverse a)]
 parseQQ a ('\\':x:xs)  = parseQQ (x:a) xs
@@ -168,7 +168,7 @@ parseQQ a ('$':x:xs) | x == '_' || isAlpha x =
     Literal (reverse a) : AntiQuote (x:pre) : parseQQ [] post
     where
     (pre, post) = span isIdent xs
-parseQQ a ('{':xs)     = Literal (reverse a) : unQC [] xs
+parseQQ a ('{':xs)     = Literal (reverse a) : unQQ [] xs
 parseQQ a (x:xs)       = parseQQ (x:a) xs
 
 isIdent '_'  = True
