@@ -1,9 +1,9 @@
 Text.InterpolatedString.Perl6
 
-QuasiQuoter for Perl6-style multi-line interpolated strings
-    with "q", "qq" and "qc" support.
+QuasiQuoter for Perl6-style multi-line interpolated strings with "q", "qq" and "qc" support.
 
 Description
+
 QuasiQuoter for interpolated strings using Perl 6 syntax.
 
 The q form does one thing and does it well: It contains a multi-line string
@@ -12,7 +12,7 @@ with no interpolation at all:
  {-# LANGUAGE QuasiQuotes, ExtendedDefaultRules #-}
  import Text.InterpolatedString.Perl6 (q)
  foo :: String
- foo = [$q|
+ foo = [q|
      Well here is a
          multi-line string!
  |]
@@ -28,7 +28,7 @@ the ExtendedDefaultRules lanuage pragma, as shown below:
  {-# LANGUAGE QuasiQuotes, ExtendedDefaultRules #-}
  import Text.InterpolatedString.Perl6 (qc)
  bar :: String
- bar = [$qc| Well {"hello" ++ " there"} {6 * 7} |]
+ bar = [qc| Well {"hello" ++ " there"} {6 * 7} |]
 
 bar will have the value " Well hello there 42 ".
 
@@ -48,7 +48,7 @@ namely interpolating a single variable into the string.
  {-# LANGUAGE QuasiQuotes, ExtendedDefaultRules #-}
  import Text.InterpolatedString.Perl6 (qq)
  baz :: String
- baz = [$qc| Hello, $who |]
+ baz = [qc| Hello, $who |]
      where
      who = World
 
@@ -59,9 +59,7 @@ Below is a sample snippet from a script that converts Shape objects into
 AppleScript suitable for drawing in OmniGraffle:
 
  {-# LANGUAGE QuasiQuotes, ExtendedDefaultRules, NamedFieldPuns, RecordWildCards #-}
- import qualified System.IO.UTF8 as UTF8
  import Text.InterpolatedString.Perl6
-
 
  data Shape = Shape
      { originX         :: Int
@@ -72,13 +70,13 @@ AppleScript suitable for drawing in OmniGraffle:
      , text            :: Text
      }
  instance ShowQ Shape where
-     showQ Shape{..} = [$qq|
+     showQ Shape{..} = [qq|
          make new shape at end of graphics with properties
              \{ $text, $stroke, _size, $_origin }
      |]
          where
-         _size   = [$qq|size: {$width, $height}|]
-         _origin = [$qq|origin: {$originX, $originY}|]
+         _size   = [qq|size: {$width, $height}|]
+         _origin = [qq|origin: {$originX, $originY}|]
 
 
  data Stroke = StrokeWhite | StrokeNone
@@ -92,16 +90,16 @@ AppleScript suitable for drawing in OmniGraffle:
      , color :: Color
      }
  instance ShowQ Text where
-     showQ Text{..} = [$qq|text: \{ text: "$txt", $color, alignment: center } |]
+     showQ Text{..} = [qq|text: \{ text: "$txt", $color, alignment: center } |]
 
 
  data Color = Color { red :: Float, green :: Float, blue :: Float }
  instance ShowQ Color where
-     showQ Color{..} = [$qq|color: {$red, $green, $blue}|]
+     showQ Color{..} = [qq|color: {$red, $green, $blue}|]
 
 
  main :: IO ()
- main = UTF8.putStrLn [$qq|
+ main = putStrLn [qq|
      tell application "OmniGraffle Professional 5"
          tell canvas of front window
              { makeShape ... }
