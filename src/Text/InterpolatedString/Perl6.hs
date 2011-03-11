@@ -187,15 +187,21 @@ reify s =
 -- | QuasiQuoter for interpolating '$var' and '{expr}' into a string literal. The pattern portion is undefined.
 qq :: QuasiQuoter
 qq = QuasiQuoter (makeExpr . parseQQ [] . filter (/= '\r'))
-    $ error "Cannot use qq as a pattern"
+                 (error "Cannot use qq as a pattern")
+                 (error "Cannot use qq as a type")
+                 (error "Cannot use qq as a dec")
 
 -- | QuasiQuoter for interpolating '{expr}' into a string literal. The pattern portion is undefined.
 qc :: QuasiQuoter
 qc = QuasiQuoter (makeExpr . parseQC [] . filter (/= '\r'))
-    $ error "Cannot use qc as a pattern"
+                 (error "Cannot use qc as a pattern")
+                 (error "Cannot use qc as a type")
+                 (error "Cannot use qc as a dec")
 
 -- | QuasiQuoter for a non-interpolating string literal. The pattern portion is undefined.
 q :: QuasiQuoter
 q = QuasiQuoter ((\a -> [|a|]) . filter (/= '\r'))
-    $ error "Cannot use q as a pattern"
+                 (error "Cannot use q as a pattern")
+                 (error "Cannot use q as a type")
+                 (error "Cannot use q as a dec")
 
