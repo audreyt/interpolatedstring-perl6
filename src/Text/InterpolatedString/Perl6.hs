@@ -9,7 +9,7 @@
 -- {-\# LANGUAGE QuasiQuotes, ExtendedDefaultRules #-}
 -- import Text.InterpolatedString.Perl6 (q)
 -- foo :: String
--- foo = [$q|
+-- foo = [q|
 -- 
 -- Well here is a
 --     multi-line string!
@@ -29,7 +29,7 @@
 -- {-\# LANGUAGE QuasiQuotes, ExtendedDefaultRules #-}
 -- import Text.InterpolatedString.Perl6 (qc)
 -- bar :: String
--- bar = [$qc| Well {\"hello\" ++ \" there\"} {6 * 7} |]
+-- bar = [qc| Well {\"hello\" ++ \" there\"} {6 * 7} |]
 -- @
 --
 -- bar will have the value \" Well hello there 42 \".
@@ -53,7 +53,7 @@
 -- {-\# LANGUAGE QuasiQuotes, ExtendedDefaultRules #-}
 -- import Text.InterpolatedString.Perl6 (qq)
 -- baz :: String
--- baz = [$qc| Hello, $who |]
+-- baz = [qc| Hello, $who |]
 --     where
 --     who = "World"
 -- @
@@ -66,7 +66,6 @@
 --
 -- @
 -- {-\# LANGUAGE QuasiQuotes, ExtendedDefaultRules, NamedFieldPuns, RecordWildCards #-}
--- import qualified System.IO.UTF8 as UTF8
 -- import Text.InterpolatedString.Perl6
 -- @ 
 --
@@ -80,13 +79,13 @@
 --     , text            :: Text
 --     }
 -- instance ShowQ Shape where
---     showQ Shape{..} = [$qq|
+--     showQ Shape{..} = [qq|
 --         make new shape at end of graphics with properties
 --             \\{ $text, $stroke, _size, $_origin }
 --     |]
 --         where         
---         _size   = [$qq|size: \{$width, $height}|]
---         _origin = [$qq|origin: \{$originX, $originY}|]
+--         _size   = [qq|size: \{$width, $height}|]
+--         _origin = [qq|origin: \{$originX, $originY}|]
 -- @ 
 --
 -- @ 
@@ -102,18 +101,18 @@
 --     , color :: Color
 --     }
 -- instance ShowQ Text where
---     showQ Text{..} = [$qq|text: \\{ text: \"$txt\", $color, alignment: center } |]
+--     showQ Text{..} = [qq|text: \\{ text: \"$txt\", $color, alignment: center } |]
 -- @ 
 --
 -- @ 
 -- data Color = Color { red :: Float, green :: Float, blue :: Float }
 -- instance ShowQ Color where
---     showQ Color{..} = [$qq|color: \{$red, $green, $blue}|]
+--     showQ Color{..} = [qq|color: \{$red, $green, $blue}|]
 -- @ 
 --
 -- @ 
 -- main :: IO ()
--- main = UTF8.putStrLn [$qq|
+-- main = putStrLn [qq|
 --     tell application \"OmniGraffle Professional 5\"
 --         tell canvas of front window
 --             { makeShape ... }
