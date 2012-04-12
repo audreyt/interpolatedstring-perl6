@@ -1,14 +1,16 @@
-{-# LANGUAGE TemplateHaskell, TypeSynonymInstances, FlexibleInstances, UndecidableInstances, OverlappingInstances #-}
+{-# LANGUAGE TemplateHaskell, TypeSynonymInstances, FlexibleInstances, 
+  UndecidableInstances, OverlappingInstances, IncoherentInstances,
+  MultiParamTypeClasses #-}
 
 -- | QuasiQuoter for interpolated strings using Perl 6 syntax.
 --
--- The "q" form does one thing and does it well: It contains a multi-line string with
+-- The 'q' form does one thing and does it well: It contains a multi-line string with
 -- no interpolation at all:
 --
 -- @
 -- {-\# LANGUAGE QuasiQuotes, ExtendedDefaultRules #-}
 -- import Text.InterpolatedString.Perl6 (q)
--- foo :: String
+-- foo :: String -- 'Text', 'ByteString' etc also works
 -- foo = [q|
 -- 
 -- Well here is a
@@ -17,10 +19,13 @@
 -- |]
 -- @
 --
--- The "qc" form interpolates curly braces: Expressions inside {} will be
--- directly interpolated if it's a String, or have 'show' called if it is not.
+-- Any instance of the 'IsString' class is permitted.
 --
--- Escaping of '{' is done with backslash.
+-- The 'qc' form interpolates curly braces: expressions inside {} will be
+-- directly interpolated if it's a 'Char', 'String', 'Text' or 'ByteString', or 
+-- it will have 'show' called if it is not.
+--
+-- Escaping of '{' is done with backslash. 
 --
 -- For interpolating numeric expressions without an explicit type signature,
 -- use the ExtendedDefaultRules lanuage pragma, as shown below:
@@ -37,16 +42,17 @@
 -- If you want control over how 'show' works on your types, define a custom
 -- 'ShowQ' instance:
 --
+-- For example, this instance allows you to display interpolated lists of strings as 
+-- a sequence of words, removing those pesky brackets, quotes, and escape sequences.
+--
 -- @
+-- {-\# LANGUAGE FlexibleInstances #-}
 -- import Text.InterpolatedString.Perl6 (qc, ShowQ(..))
--- instance ShowQ ByteString where
---     showQ = unpack
+-- instance ShowQ [String] where
+--     showQ = unwords
 -- @
 --
--- That way you interpolate bytestrings will not result in double quotes or
--- character escapes.
---
--- The "qq" form adds to the "qc" form with a simple shorthand: '$foo' means '{foo}',
+-- The 'qq' form adds to the 'qc' form with a simple shorthand: '$foo' means '{foo}',
 -- namely interpolating a single variable into the string.
 --
 -- @
@@ -55,11 +61,23 @@
 -- baz :: String
 -- baz = [qc| Hello, $who |]
 --     where
---     who = "World"
+--     who = \"World\"
 -- @
 --
--- The ability to define custom "ShowQ" instances is particularly powerful with
--- cascading instances using "qq".
+-- Both 'qc' and 'qq' permit output to any types with both 'IsString' and 'Monoid' 
+-- instances.
+-- 
+-- @
+-- {-# LANGUAGE QuasiQuotes, OverloadedStrings #-}
+-- import Text.InterpolatedString.Perl6 (qc)
+-- import Data.Text (Text)
+-- import Data.ByteString.Char8 (ByteString)
+-- qux :: ByteString
+-- qux = [qc| This will convert {\"Text\" :: Text} to {\"ByteString\" :: ByteString} |]
+-- @
+--
+-- The ability to define custom 'ShowQ' instances is particularly powerful with
+-- cascading instances using 'qq'.
 --
 -- Below is a sample snippet from a script that converts Shape objects into
 -- AppleScript suitable for drawing in OmniGraffle:
@@ -126,19 +144,53 @@ module Text.InterpolatedString.Perl6 (qq, qc, q, ShowQ(..)) where
 import qualified Language.Haskell.TH as TH
 import Language.Haskell.TH.Quote
 import Language.Haskell.Meta.Parse
+import GHC.Exts (IsString(..))
+import Data.Monoid (Monoid(..))
+import Data.ByteString.Char8 as Strict (ByteString, unpack)
+import Data.ByteString.Lazy.Char8 as Lazy (ByteString, unpack)
+import Data.Text as T (Text, unpack)
+import Data.Text.Lazy as LazyT(Text, unpack)
 import Data.Char (isAlpha, isAlphaNum)
 
+-- |A class for types that use special interpolation rules.
+-- Instances of 'ShowQ' that are also instances of 'IsString' should obey the 
+-- following law: 
+--
+-- @
+-- (fromString . showQ) s == id s
+-- @
 class ShowQ a where
     showQ :: a -> String
 
 instance ShowQ Char where
     showQ = (:[])
-
+    
 instance ShowQ String where
     showQ = id
 
-instance (Show a) => ShowQ a where
+instance ShowQ Strict.ByteString where
+    showQ = Strict.unpack
+
+instance ShowQ Lazy.ByteString where
+    showQ = Lazy.unpack
+
+instance ShowQ T.Text where
+    showQ = T.unpack
+
+instance ShowQ LazyT.Text where
+    showQ = LazyT.unpack
+
+instance Show a => ShowQ a where
     showQ = show
+
+class QQ a string where
+    toQQ :: a -> string
+
+instance IsString s => QQ s s where
+    toQQ = id
+
+instance (ShowQ a, IsString s) => QQ a s where 
+    toQQ = fromString . showQ
 
 data StringPart = Literal String | AntiQuote String deriving Show
 
@@ -174,13 +226,15 @@ isIdent '_'  = True
 isIdent '\'' = True
 isIdent x    = isAlphaNum x
 
-makeExpr [] = [| "" |]
-makeExpr ((Literal a):xs)   = TH.appE [| (++) a |] $ makeExpr xs
-makeExpr ((AntiQuote a):xs) = TH.appE [| (++) (showQ $(reify a)) |] $ makeExpr xs
+makeExpr [] = [| mempty |]
+makeExpr ((Literal a):xs)   = TH.appE [| mappend (fromString a) |] 
+                              $ makeExpr xs
+makeExpr ((AntiQuote a):xs) = TH.appE [| mappend (toQQ $(reify a)) |] 
+                              $ makeExpr xs
 
 reify s = 
     case parseExp s of
-        Left s  -> TH.report True s >> [| "" |]
+        Left s  -> TH.report True s >> [| mempty |]
         Right e ->  return e
 
 -- | QuasiQuoter for interpolating '$var' and '{expr}' into a string literal. The pattern portion is undefined.
@@ -199,7 +253,7 @@ qc = QuasiQuoter (makeExpr . parseQC [] . filter (/= '\r'))
 
 -- | QuasiQuoter for a non-interpolating string literal. The pattern portion is undefined.
 q :: QuasiQuoter
-q = QuasiQuoter ((\a -> [|a|]) . filter (/= '\r'))
+q = QuasiQuoter ((\a -> [|fromString a|]) . filter (/= '\r'))
                  (error "Cannot use q as a pattern")
                  (error "Cannot use q as a type")
                  (error "Cannot use q as a dec")
