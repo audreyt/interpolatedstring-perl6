@@ -95,7 +95,7 @@
 --     , height          :: Int
 --     , stroke          :: Stroke
 --     , text            :: Text
---    }
+--     }
 -- instance ShowQ Shape where
 --     showQ Shape{..} = [qq|
 --         make new shape at end of graphics with properties
