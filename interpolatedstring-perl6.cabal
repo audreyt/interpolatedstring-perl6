@@ -11,7 +11,7 @@ Cabal-Version: >= 1.6
 Build-Depends: base
 Build-Type:    Custom
 Synopsis:      QuasiQuoter for Perl6-style multi-line interpolated strings
-Description:   QuasiQuoter for Perl6-style multi-line interpolated strings with "q", "qq" and "qc" support.
+Description:   QuasiQuoter for Perl6-style multi-line interpolated strings with 'q', 'qq' and 'qc' support.
 Data-Files:    tests/Test.hs
 
 Source-Repository head
@@ -20,6 +20,6 @@ Source-Repository head
 
 library
     extensions:      TemplateHaskell, TypeSynonymInstances, FlexibleInstances, UndecidableInstances, OverlappingInstances
-    build-depends:   base > 4 && < 5, template-haskell >= 2.5, haskell-src-meta >= 0.3
+    build-depends:   base > 4 && < 5, template-haskell >= 2.5, haskell-src-meta >= 0.3, text, bytestring
     hs-source-dirs:  src
     exposed-modules: Text.InterpolatedString.Perl6
