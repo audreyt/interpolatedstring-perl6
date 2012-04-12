@@ -11,7 +11,7 @@ no interpolation at all:
 
 {-# LANGUAGE QuasiQuotes, ExtendedDefaultRules #-}
 import Text.InterpolatedString.Perl6 (q)
-foo :: String Text, ByteString etc also works
+foo :: String -- Text, ByteString etc also works
 foo = [q|
 
 Well here is a
