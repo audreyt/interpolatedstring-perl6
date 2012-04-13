@@ -156,7 +156,7 @@ import Data.Char (isAlpha, isAlphaNum)
 -- following law: 
 --
 -- @
--- (fromString . showQ) s == id s
+-- (fromString . showQ) s == s
 -- @
 class ShowQ a where
     showQ :: a -> String
