@@ -1,6 +1,5 @@
 {-# LANGUAGE TemplateHaskell, TypeSynonymInstances, FlexibleInstances, 
-  UndecidableInstances, OverlappingInstances, IncoherentInstances,
-  MultiParamTypeClasses #-}
+  UndecidableInstances, OverlappingInstances, MultiParamTypeClasses #-}
 
 -- | QuasiQuoter for interpolated strings using Perl 6 syntax.
 --
@@ -183,15 +182,6 @@ instance ShowQ LazyT.Text where
 instance Show a => ShowQ a where
     showQ = show
 
-class QQ a string where
-    toQQ :: a -> string
-
-instance IsString s => QQ s s where
-    toQQ = id
-
-instance (ShowQ a, IsString s) => QQ a s where 
-    toQQ = fromString . showQ
-
 data StringPart = Literal String | AntiQuote String deriving Show
 
 unQC a []          = [Literal (reverse a)]
@@ -229,7 +219,7 @@ isIdent x    = isAlphaNum x
 makeExpr [] = [| mempty |]
 makeExpr ((Literal a):xs)   = TH.appE [| mappend (fromString a) |] 
                               $ makeExpr xs
-makeExpr ((AntiQuote a):xs) = TH.appE [| mappend (toQQ $(reify a)) |] 
+makeExpr ((AntiQuote a):xs) = TH.appE [| mappend (fromString (showQ $(reify a))) |] 
                               $ makeExpr xs
 
 reify s = 
