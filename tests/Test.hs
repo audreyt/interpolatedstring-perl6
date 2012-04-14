@@ -5,8 +5,8 @@ module Main where
 import Text.InterpolatedString.Perl6
 import Test.HUnit
 import GHC.Exts(fromString)
-import Data.ByteString.Char8 (ByteString)
-import Data.Text (Text)
+import Data.ByteString.Char8 as BS(ByteString, pack)
+import Data.Text as T(Text, pack)
 
 data Foo = Foo Int String deriving Show
 
@@ -28,7 +28,6 @@ testComplex     = assertBool "" ([$qc|
 testConvert = assertBool "" 
               (([$qc|{fromString "a"::Text} {fromString "b"::ByteString}|] :: String)
                == "a b")
-
 
 tests = TestList
     [ TestLabel "Empty String" $ TestCase testEmpty

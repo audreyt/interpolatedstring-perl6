@@ -1,6 +1,7 @@
 {-# LANGUAGE TemplateHaskell, TypeSynonymInstances, FlexibleInstances, 
-  UndecidableInstances, OverlappingInstances, IncoherentInstances,
-  MultiParamTypeClasses #-}
+  UndecidableInstances, OverlappingInstances, MultiParamTypeClasses,
+  IncoherentInstances
+  #-}
 
 -- | QuasiQuoter for interpolated strings using Perl 6 syntax.
 --
@@ -139,6 +140,7 @@
 -- |]
 -- @
 --
+
 module Text.InterpolatedString.Perl6 (qq, qc, q, ShowQ(..)) where
 
 import qualified Language.Haskell.TH as TH
@@ -157,8 +159,11 @@ import Data.Char (isAlpha, isAlphaNum)
 -- following law: 
 --
 -- @
--- (fromString . showQ) s == id s
+-- fromString (showQ s) == s
 -- @
+--
+-- because this library relies on this fact to optimize 
+-- away needless string conversions.
 class ShowQ a where
     showQ :: a -> String
 
@@ -183,6 +188,8 @@ instance ShowQ LazyT.Text where
 instance Show a => ShowQ a where
     showQ = show
 
+-- todo: this should really be rewritten into RULES pragmas, but so far
+-- I can't convince GHC to let the rules fire.
 class QQ a string where
     toQQ :: a -> string
 
@@ -257,4 +264,3 @@ q = QuasiQuoter ((\a -> [|fromString a|]) . filter (/= '\r'))
                  (error "Cannot use q as a pattern")
                  (error "Cannot use q as a type")
                  (error "Cannot use q as a dec")
-
