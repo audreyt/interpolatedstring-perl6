@@ -138,6 +138,7 @@
 -- |]
 -- @
 --
+
 module Text.InterpolatedString.Perl6 (qq, qc, q, ShowQ(..)) where
 
 import qualified Language.Haskell.TH as TH
@@ -182,6 +183,15 @@ instance ShowQ LazyT.Text where
 instance Show a => ShowQ a where
     showQ = show
 
+class QQ a string where
+    toQQ :: a -> string
+
+instance IsString s => QQ s s where
+    toQQ = id
+
+instance (ShowQ a, IsString s) => QQ a s where 
+    toQQ = fromString . showQ
+
 data StringPart = Literal String | AntiQuote String deriving Show
 
 unQC a []          = [Literal (reverse a)]
@@ -219,7 +229,7 @@ isIdent x    = isAlphaNum x
 makeExpr [] = [| mempty |]
 makeExpr ((Literal a):xs)   = TH.appE [| mappend (fromString a) |] 
                               $ makeExpr xs
-makeExpr ((AntiQuote a):xs) = TH.appE [| mappend (fromString (showQ $(reify a))) |] 
+makeExpr ((AntiQuote a):xs) = TH.appE [| mappend (toQQ $(reify a)) |] 
                               $ makeExpr xs
 
 reify s = 
@@ -247,4 +257,3 @@ q = QuasiQuoter ((\a -> [|fromString a|]) . filter (/= '\r'))
                  (error "Cannot use q as a pattern")
                  (error "Cannot use q as a type")
                  (error "Cannot use q as a dec")
-
