@@ -60,7 +60,7 @@
 -- {-\# LANGUAGE QuasiQuotes, ExtendedDefaultRules #-}
 -- import Text.InterpolatedString.Perl6 (qq)
 -- baz :: String
--- baz = [qc| Hello, $who |]
+-- baz = [qq| Hello, $who |]
 --     where
 --     who = \"World\"
 -- @
