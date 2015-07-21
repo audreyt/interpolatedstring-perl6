@@ -18,11 +18,11 @@ testString      = assertBool "" ([$qc|a string {t1} is here|] == "a string 字�
 testVariable    = assertBool "" ([$qq|a string {t1} $t1 {t1} $t1 is here|] == "a string 字元 字元 字元 字元 is here")
 testEscape      = assertBool "" ([$qc|#\{}|] == "#{}" && [$qc|\{}|] == "{}")
 testComplex     = assertBool "" ([$qc|
-        ok
+        \ok
 {Foo 4 "Great!" : [Foo 3 "Scott!"]}
         then
 |] == ("\n" ++
-    "        ok\n" ++
+    "        \\ok\n" ++
     "[Foo 4 \"Great!\",Foo 3 \"Scott!\"]\n" ++
     "        then\n"))
 testConvert = assertBool "" 

@@ -1,12 +1,12 @@
 Name:          interpolatedstring-perl6
-Version:       0.9.0
-License:       BSD3
+Version:       1.0.0
+License:       PublicDomain
 License-file:  LICENSE
 Category:      Data
 Author:        Audrey Tang
 Copyright:     Audrey Tang
 Maintainer:    Audrey Tang <audreyt@audreyt.org>
-Stability:     unstable
+Stability:     stable
 Cabal-Version: >= 1.6
 Build-Depends: base
 Build-Type:    Custom

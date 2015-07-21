@@ -208,7 +208,8 @@ unQC a ('}':xs)    = AntiQuote (reverse a) : parseQC [] xs
 unQC a (x:xs)      = unQC (x:a) xs
 
 parseQC a []           = [Literal (reverse a)]
-parseQC a ('\\':x:xs)  = parseQC (x:a) xs
+parseQC a ('\\':'\\':xs) = parseQC ('\\':a) xs
+parseQC a ('\\':'{':xs) = parseQC ('{':a) xs
 parseQC a ('\\':[])    = parseQC ('\\':a) []
 parseQC a ('{':xs)     = Literal (reverse a) : unQC [] xs
 parseQC a (x:xs)       = parseQC (x:a) xs
