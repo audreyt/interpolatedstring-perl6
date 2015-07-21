@@ -8,7 +8,6 @@ Copyright:     Audrey Tang
 Maintainer:    Audrey Tang <audreyt@audreyt.org>
 Stability:     stable
 Cabal-Version: >= 1.6
-Build-Depends: base
 Build-Type:    Custom
 Synopsis:      QuasiQuoter for Perl6-style multi-line interpolated strings
 Description:   QuasiQuoter for Perl6-style multi-line interpolated strings with \"q\", \"qq\" and \"qc\" support.
