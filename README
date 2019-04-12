@@ -89,7 +89,7 @@ data Shape = Shape
 instance ShowQ Shape where
     showQ Shape{..} = [qq|
         make new shape at end of graphics with properties
-            \{ $text, $stroke, _size, $_origin }
+            \{ $text, $stroke, $_size, $_origin }
     |]
         where         
         _size   = [qq|size: \{$width, $height}|]
