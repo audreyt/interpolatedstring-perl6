@@ -1,6 +1,7 @@
 import Distribution.Simple
 import System.Cmd(system)
 
-main = defaultMainWithHooks $ simpleUserHooks { runTests = runElfTests }
+main = defaultMainWithHooks $ simpleUserHooks { testHook = runElfTests }
 
-runElfTests a b pd lb = system "runhaskell -i./src ./tests/Test.hs" >> return ()
+runElfTests _ _ _ _ _ = system "runhaskell -i./src ./tests/Test.hs" >> return ()
+
